@@ -1,0 +1,61 @@
+@if (!api.authenticated()) {
+  <div class="content" style="max-width:440px;margin:48px auto">
+    <form class="card" (ngSubmit)="enter()">
+      <h1>Вход</h1>
+      <p class="sub">Учётные записи создаёт только администратор и назначает роль. Самостоятельной регистрации нет. Email — логин для входа. Демо-пароль у всех: sur-demo.</p>
+      <div class="field"><label>Email</label><input name="login" [(ngModel)]="loginName" placeholder="owner&#64;sur.local" /></div>
+      <div class="field"><label>Пароль</label><input name="password" type="password" [(ngModel)]="password" /></div>
+      <button class="btn primary" type="submit">Войти</button>
+      <p class="sub">admin&#64;sur.local, owner&#64;sur.local, director&#64;sur.local, employee&#64;sur.local, ceo&#64;sur.local, specialist&#64;sur.local, finance&#64;sur.local</p>
+      @if (api.notice()) {
+        <div class="notice">
+          <span>{{ api.notice() }}</span>
+          <button class="notice-close" type="button" (click)="api.clearNotice()" aria-label="Закрыть">×</button>
+        </div>
+      }
+    </form>
+  </div>
+} @else {
+<div class="app">
+  <aside class="sidebar" [class.collapsed]="collapsed">
+    <div class="brand"><div class="logo">Q</div><span>Risk Management System</span></div>
+    <nav class="nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Дашборд</a>
+      <a routerLink="/risks" routerLinkActive="active">Риски</a>
+      <a routerLink="/top" routerLinkActive="active">Топ-риски</a>
+      <a routerLink="/reports" routerLinkActive="active">Отчёты</a>
+      <a routerLink="/archive" routerLinkActive="active">Архив</a>
+      <a routerLink="/approvals" routerLinkActive="active">На согласование</a>
+      <a routerLink="/help" routerLinkActive="active">Справка</a>
+      <button class="nav-btn" [class.open]="settingsOpen" type="button" (click)="settingsOpen = !settingsOpen">
+        Настройки <span class="chev">{{ settingsOpen ? '▴' : '▾' }}</span>
+      </button>
+      @if (settingsOpen) {
+        <div class="subnav">
+          <a routerLink="/settings" fragment="org">Дирекции и процессы</a>
+          <a routerLink="/settings" fragment="scales">Шкалы оценки</a>
+          <a routerLink="/settings" fragment="refs">Опасности</a>
+          <a routerLink="/settings" fragment="roles">Роли и пользователи</a>
+        </div>
+      }
+    </nav>
+    <button class="collapse" type="button" (click)="collapsed = !collapsed">↔</button>
+  </aside>
+  <section class="main">
+    <header class="topbar">
+      <button class="btn" type="button" (click)="api.logout()">Выйти</button>
+      <div class="avatar">{{ avatarLetter() }}</div>
+      <div class="user">{{ api.meta()?.me?.login }}</div>
+    </header>
+    <div class="content">
+      @if (api.notice()) {
+        <div class="notice">
+          <span>{{ api.notice() }}</span>
+          <button class="notice-close" type="button" (click)="api.clearNotice()" aria-label="Закрыть">×</button>
+        </div>
+      }
+      <router-outlet />
+    </div>
+  </section>
+</div>
+}

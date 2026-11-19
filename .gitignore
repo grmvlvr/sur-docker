@@ -1,0 +1,11 @@
+web/node_modules/
+web/dist/
+web/.angular/
+
+server/**/bin/
+server/**/obj/
+server/**/App_Data/
+
+.vs/
+*.user
+ЗАПУСК.local.md
