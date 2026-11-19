@@ -5,10 +5,13 @@ builder.Services.AddSingleton<Domain>();
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
 var app = builder.Build();
 app.UseCors();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.Use(async (ctx, next) =>
 {
     var path = ctx.Request.Path.Value ?? "";
-    if (path.StartsWith("/api/login", StringComparison.OrdinalIgnoreCase))
+    if (!path.StartsWith("/api", StringComparison.OrdinalIgnoreCase)
+        || path.StartsWith("/api/login", StringComparison.OrdinalIgnoreCase))
     {
         await next();
         return;
@@ -74,4 +77,5 @@ app.MapPost("/api/risks/{id}/snapshot", (Domain d, string id) => Fn.CreateSnapsh
 app.MapGet("/api/reports/snapshots/{id}/csv", (Domain d, string id) => Fn.OpenSnapshot(d, id, "csv"));
 app.MapGet("/api/reports/snapshots/{id}/pdf", (Domain d, string id) => Fn.OpenSnapshot(d, id, "pdf"));
 
+app.MapFallbackToFile("index.html");
 app.Run();
